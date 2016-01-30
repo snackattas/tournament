@@ -1,2 +1,4 @@
-# tournament
-Lesson 2 project as part of Udacity's Full Stack Nanodegree
+rdb-fullstack
+=============
+
+Common code for the Relational Databases and Full Stack Fundamentals courses
