@@ -1,9 +1,13 @@
--- Table definitions for the tournament project.
---
--- Put your SQL 'create table' statements in this file; also 'create view'
--- statements if you choose to use it.
---
--- You can write comments in this file by starting them with two dashes, like
--- these lines here.
-
-
+--Run this command on the psql command line to create the tournament DATABASE
+--\i tournament.sql
+-- CREATE FUNCTION does_tournament_exist () RETURNS text AS $$
+-- DECLARE
+-- name TEXT;
+-- BEGIN
+-- name := SELECT datname FROM pg_catalog.pg_database WHERE datname='tournament';
+-- RETURN name;
+-- END $$;
+-- IF does_tournament_exist()='tournament' THEN DROP DATABASE tournament;
+-- END IF;
+CREATE DATABASE tournament;
+\c tournament;
