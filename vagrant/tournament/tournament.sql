@@ -11,3 +11,24 @@
 -- END IF;
 CREATE DATABASE tournament;
 \c tournament;
+
+CREATE TABLE players
+(
+    id serial PRIMARY KEY,
+    player_name text
+);
+
+CREATE TABLE matches
+(
+    id integer REFERENCES players(id),
+    round integer,
+    win_or_lose boolean
+);
+
+CREATE TABLE ranking
+(
+    id integer REFERENCES players(id),
+    wins integer,
+    losses integer,
+    ties integer
+)
