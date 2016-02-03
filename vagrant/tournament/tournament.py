@@ -46,6 +46,7 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
+
     (database, cursor) = connect()
     cursor.execute("INSERT INTO players VALUES (DEFAULT, %s)", (name, ))
     database.commit()
@@ -67,14 +68,29 @@ def playerStandings():
     """
 
 
-def reportMatch(winner, loser):
-    """Records the outcome of a single match between two players.
+def reportMatch(winner, loser, tie = False):
+    """Records the outcome of a single match between two players. User must pass
+    in values for winner and loser. tie is optional.
 
     Args:
-      winner:  the id number of the player who won
-      loser:  the id number of the player who lost
+      winner:  the id number of the player who won.
+      loser:  the id number of the player who lost.
+      tie (DEFAULT = FALSE): pass in TRUE if the players tied.  In this case,
+                             the columns for winner and loser don't represent
+                             the actual winner/loser.  They represent the
+                             participants.
     """
 
+    if not winner and loser:
+        raise ValueError("user must pass in both a winner and loser to "
+                        "reportMatch")
+
+    (database, cursor) = connect()
+    cursor.execute("INSERT INTO matches VALUES (DEFAULT, %s, %s, %s)",
+                  (winner, loser, tie,))
+    database.commit()
+    database.close()
+    return ""
 
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
@@ -91,3 +107,17 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+def populate(m):
+    for n in range(m):
+        registerPlayer("zachy"+str(n+1))
+def rmtest():
+    reportMatch(1,2)
+    reportMatch(4,3)
+    reportMatch(5,6)
+    reportMatch(8,7)
+    reportMatch(9,10,True)
+    reportMatch(11,12,True)
+    reportMatch(9,13)
+    reportMatch(13,9)
+    reportMatch(1,10,True)
+    return ""
