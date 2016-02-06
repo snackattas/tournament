@@ -15,7 +15,7 @@ def connect():
 
 def deleteMatches():
     (database, cursor) = connect()
-    cursor.execute("DELETE FROM matches;")
+    cursor.execute("DELETE FROM records; DELETE FROM match_registry;")
     database.commit()
     database.close()
     return ""
@@ -51,7 +51,6 @@ def registerPlayer(name):
     cursor.execute("INSERT INTO players VALUES (DEFAULT, %s)", (name, ))
     database.commit()
     database.close()
-    return ""
 
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
@@ -66,7 +65,11 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-
+    (database, cursor) = connect()
+    cursor.execute("SELECT * FROM playerStandings")
+    playerStandings = cursor.fetchall()
+    database.close()
+    return playerStandings
 
 def reportMatch(winner, loser, tie = False):
     """Records the outcome of a single match between two players. User must pass
@@ -80,17 +83,36 @@ def reportMatch(winner, loser, tie = False):
                              the actual winner/loser.  They represent the
                              participants.
     """
-
+    # Raise a Value Error if the function was improperly called
     if not winner and loser:
         raise ValueError("user must pass in both a winner and loser to "
                         "reportMatch")
-
     (database, cursor) = connect()
-    cursor.execute("INSERT INTO matches VALUES (DEFAULT, %s, %s, %s)",
-                  (winner, loser, tie,))
+    # Register the match, always store the smaller player_id number in the
+    # opponent_one spot to avoid repeat matches with the sql index
+    if winner > loser:
+        cursor.execute("INSERT INTO match_registry VALUES (DEFAULT, %s, %s)",
+                  (loser, winner,))
+    if loser > winner:
+        cursor.execute("INSERT INTO match_registry VALUES (DEFAULT, %s, %s)",
+                  (winner, loser,))
+    database.commit()
+    # Retrieve the match number from what was just inserted
+    cursor.execute("SELECT match from match_registry ORDER BY match DESC LIMIT 1")
+    match_number = cursor.fetchone()[0]
+
+    if tie == True:
+        cursor.execute("INSERT INTO records VALUES (%s, %s, False, False, %s)",
+                      (match_number, winner, True,))
+        cursor.execute("INSERT INTO records VALUES (%s, %s, False, False, %s)",
+                      (match_number, loser, True,))
+    if tie == False:
+        cursor.execute("INSERT INTO records VALUES (%s, %s, %s, False, False)",
+                      (match_number, winner, True,))
+        cursor.execute("INSERT INTO records VALUES (%s, %s, False, %s, False)",
+                      (match_number, loser, True,))
     database.commit()
     database.close()
-    return ""
 
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
@@ -107,6 +129,11 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    (database, cursor) = connect()
+    cursor.execute("SELECT * FROM swissPairings;")
+    swissPairings = cursor.fetchall()
+    database.close()
+    return swissPairings
 def populate(m):
     for n in range(m):
         registerPlayer("zachy"+str(n+1))
@@ -117,7 +144,5 @@ def rmtest():
     reportMatch(8,7)
     reportMatch(9,10,True)
     reportMatch(11,12,True)
-    reportMatch(9,13)
-    reportMatch(13,9)
-    reportMatch(1,10,True)
+    reportMatch(13,14)
     return ""
