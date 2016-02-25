@@ -19,8 +19,7 @@ CREATE TABLE players (
 
 -- This is the match registry table.  Every row gets a match serial number.
 -- In the case of a normal match, opponent_one and opponent_two will be populated.
--- In the case of a bye, only opponent_one will be populated, opponent_two will be null,
--- and bye will be true.
+-- In the case of a bye, only opponent_one will be populated, opponent_two will be null.
 CREATE TABLE matchRegistry (
     tournament_id integer REFERENCES tournaments(tournament_id)
 ,   match_id serial PRIMARY KEY
@@ -32,7 +31,7 @@ CREATE TABLE matchRegistry (
 CREATE UNIQUE INDEX reverseMatchRegistry
 ON matchRegistry(opponent_one, opponent_two);
 
---The paradigm in this table is that the columns win/loss/tie/bye will only every be populated with true.  There's no need to populate them with false.
+--The paradigm in this table is that the columns win/loss/tie/bye will only ever be populated with true.  There's no need to populate them with false.
 CREATE TABLE records (
     tournament_id integer REFERENCES tournaments(tournament_id)
 ,   match_id integer REFERENCES matchRegistry(match_id)
@@ -43,9 +42,11 @@ CREATE TABLE records (
 ,   bye boolean
 );
 
+-- This index prevents the same player from receiving multiple byes
 CREATE UNIQUE INDEX noPlayerWithTwoByes
 ON records(player_id, bye);
 
+-- The totalRecord view creates important fields for calculating player standings
 CREATE VIEW totalRecord AS
 SELECT
     player_id
@@ -54,10 +55,10 @@ SELECT
 ,   count(tie) AS total_ties
 ,   count(bye) AS bye
 FROM records
-GROUP BY player_id, tournament_id
-ORDER BY player_id;
+GROUP BY player_id;
 
-CREATE VIEW totalRecordWithName AS
+-- The totalRecordWithMetadata view pulls identifying information from the players table and combines it with the totalRecord table.  It also does a coalesce operation and a left join to make sure that if a player doesn't have any matches yet, the player qill still show up here, albeit with a record full of 0's.
+CREATE VIEW totalRecordWithMetadata AS
 SELECT
     players.tournament_id
 ,   players.player_id

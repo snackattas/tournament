@@ -1,4 +1,3 @@
-
 import psycopg2
 import bleach
 from operator import itemgetter
@@ -93,7 +92,7 @@ def playerStandings(tournament_id = 1):
     """
     (database, cursor) = connect()
     # Get the total record, filtered by the tournament in question
-    cursor.execute("SELECT player_id, player_name, total_wins, total_matches, total_ties, bye FROM totalRecordWithName WHERE tournament_id = %s", (tournament_id,))
+    cursor.execute("SELECT player_id, player_name, total_wins, total_matches, total_ties, bye FROM totalRecordWithMetadata WHERE tournament_id = %s", (tournament_id,))
     total_record = cursor.fetchall()
     database.close()
     player_standings = []
