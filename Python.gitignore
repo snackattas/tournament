@@ -67,3 +67,6 @@ target/
 
 # pyenv
 .python-version
+
+# Compiled python files
+*.pyc
