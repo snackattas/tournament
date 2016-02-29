@@ -15,6 +15,7 @@ CREATE TABLE players (
     tournament_id integer REFERENCES tournaments(tournament_id)
 ,   player_id serial PRIMARY KEY
 ,   player_name varchar(254)
+,   player_standing decimal
 );
 
 -- This is the match registry table.  Every row gets a match serial number.
@@ -46,8 +47,8 @@ CREATE TABLE records (
 CREATE UNIQUE INDEX noPlayerWithTwoByes
 ON records(player_id, bye);
 
--- The totalRecord view creates important fields for calculating player standings
-CREATE VIEW totalRecord AS
+-- The counts view creates important fields for calculating player standings
+CREATE VIEW counts AS
 SELECT
     player_id
 ,   count(win) AS total_wins
@@ -57,15 +58,17 @@ SELECT
 FROM records
 GROUP BY player_id;
 
--- The totalRecordWithMetadata view pulls identifying information from the players table and combines it with the totalRecord table.  It also does a coalesce operation and a left join to make sure that if a player doesn't have any matches yet, the player qill still show up here, albeit with a record full of 0's.
-CREATE VIEW totalRecordWithMetadata AS
+-- The playerStandings view pulls identifying information from the players table and combines it with the count table.  It also does a coalesce operation and a left join to make sure that if a player doesn't have any matches yet, the player qill still show up here, albeit with a record full of 0's.
+CREATE VIEW playerStandings AS
 SELECT
-    players.tournament_id
-,   players.player_id
+    players.player_id
 ,   players.player_name
-,   coalesce(totalRecord.total_wins, 0) AS total_wins
-,   coalesce(totalRecord.total_matches, 0) AS total_matches
-,   coalesce(totalRecord.total_ties, 0) AS total_ties
-,   coalesce(totalRecord.bye, 0) AS bye
-FROM players LEFT JOIN totalRecord
-ON players.player_id = totalRecord.player_id;
+,   coalesce(counts.total_wins, 0) AS total_wins
+,   coalesce(counts.total_matches, 0) AS total_matches
+,   coalesce(counts.total_ties, 0) AS total_ties
+,   coalesce(counts.bye, 0) AS bye
+,   players.tournament_id
+,   coalesce(players.player_standing, 0) AS player_standing
+FROM players LEFT JOIN counts
+ON players.player_id = counts.player_id
+ORDER BY player_standing DESC;
