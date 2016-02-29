@@ -30,7 +30,7 @@ This is a tournament database engine created as project 2 of [Udacity's Full Sta
   * In the python interpreter by using the command `import tournament`, and using the methods in tournament.py
 
 ## Testing
-To test the database engine, run `python tournament_test.py` at the command line in the tournament directory.  Make sure to Run the setup steps before running `tournament_test.py`
+To test the database engine, run `python tournament_test.py` at the command line in the tournament directory.  Make sure to run the setup steps before using `tournament_test.py`
 
 ## Dependencies
-* Python v 2.7
+Python v 2.7
