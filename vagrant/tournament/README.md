@@ -6,8 +6,8 @@ This is a tournament database engine created as project 2 of [Udacity's Full Sta
 * Supports ties
 * Uses the Swiss pairing system for pairing players together  
 * Supports more than one tournament in the database
-* Database prevents rematches between players
-* Each tournament can host either an even or odd number of players
+* Prevents rematches between players
+* A tournament can host either an even or odd number of players
   * In the case of an odd number of players, the weakest player receives a bye each round
   * A player cannot receive more than one bye in a tournament
 
@@ -19,18 +19,18 @@ This is a tournament database engine created as project 2 of [Udacity's Full Sta
   * +0 ≤ OMW ≤ 1
     * OMW stands for Opponent Matched Wins
     * It is a decimal between 0 and 1 rounded to 2 decimal places
-    * It is the total number of wins by players played against divided by the total number of matches by players played against
+    * It is calculated as total number of wins by players played against divided by the total number of matches by players played against
 
 ## Setup
 * Secure shell into the [vagrant VM](https://www.vagrantup.com/docs/getting-started/) installed in this github repository
 * Enter the [psql command line](http://www.postgresql.org/docs/8.4/static/tutorial-accessdb.html) by typing `psql` in the tournament directory
-* Use the command `\i tournament.sql` to import the database schema into psql at once
+* Use the command `\i tournament.sql` to import the database schema into psql
 * The database can now be manipulated  in two ways:
   * In psql using sql commands directly
   * In the python interpreter by using the command `import tournament`, and using the methods in tournament.py
 
 ## Testing
-To test the database engine, run `python tournament_test.py` at the command line in the tournament directory
+To test the database engine, run `python tournament_test.py` at the command line in the tournament directory.  Make sure to Run the setup steps before running `tournament_test.py`
 
 ## Dependencies
 * Python v 2.7
