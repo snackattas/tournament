@@ -250,8 +250,8 @@ def reportMatch(winner, loser, tie=None, bye=None, tournament_id=None):
     # Check for byes first, since this is the only scoring element that only
     # involves the winner parameter, and not the loser parameter
     if winner and bye and not (loser or tie):
-        with get_cursor() as cursor:
         # First register the match
+        with get_cursor() as cursor:
             insert = """
                 INSERT INTO matchRegistry (tournament_id, match_id,
                 opponent_one)
