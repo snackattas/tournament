@@ -64,7 +64,7 @@ def deletePlayers(tournament_id=1):
 
 
 def countPlayers(tournament_id=1):
-    """Returns the number of players currently registered.
+    """Returns the number of players currently registered in a specific tournament.
 
     Args:
       tournament_id: the tournament's unique id (assigned by the database)"""
